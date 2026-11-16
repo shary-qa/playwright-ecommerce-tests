@@ -64,6 +64,7 @@ test.describe('Known bugs: problem_user', () => {
     test.fail();
     const inventory = await loginAs(page, USERS.problem);
     await inventory.names.filter({ hasText: 'Sauce Labs Backpack' }).click();
+    await expect(page.getByTestId('back-to-products')).toBeVisible(); // wait for the detail page
     await expect(page.getByTestId('inventory-item-name')).toHaveText('Sauce Labs Backpack', { timeout: 3000 });
   });
 

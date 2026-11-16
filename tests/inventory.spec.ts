@@ -46,6 +46,8 @@ test.describe('Product list', () => {
     const price = await inventory.prices.first().textContent();
     await inventory.names.first().click();
     await expect(page).toHaveURL(/inventory-item\.html/);
+    // The URL changes before the page redraws, so wait for the detail page itself (fixes a CI-only flake on Android)
+    await expect(page.getByTestId('back-to-products')).toBeVisible();
     await expect(page.getByTestId('inventory-item-name')).toHaveText(name!);
     await expect(page.getByTestId('inventory-item-price')).toHaveText(price!);
   });
