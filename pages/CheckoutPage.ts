@@ -1,0 +1,47 @@
+import { Page, Locator, expect } from '@playwright/test';
+
+/** Checkout: step one (your info), step two (overview) and the complete screen. */
+export class CheckoutPage {
+  readonly firstName: Locator;
+  readonly lastName: Locator;
+  readonly postalCode: Locator;
+  readonly continueButton: Locator;
+  readonly error: Locator;
+  readonly itemPrices: Locator;
+  readonly subtotal: Locator;
+  readonly tax: Locator;
+  readonly total: Locator;
+  readonly finishButton: Locator;
+  readonly completeHeader: Locator;
+
+  constructor(private page: Page) {
+    this.firstName = page.getByTestId('firstName');
+    this.lastName = page.getByTestId('lastName');
+    this.postalCode = page.getByTestId('postalCode');
+    this.continueButton = page.getByTestId('continue');
+    this.error = page.getByTestId('error');
+    this.itemPrices = page.getByTestId('inventory-item-price');
+    this.subtotal = page.getByTestId('subtotal-label');
+    this.tax = page.getByTestId('tax-label');
+    this.total = page.getByTestId('total-label');
+    this.finishButton = page.getByTestId('finish');
+    this.completeHeader = page.getByTestId('complete-header');
+  }
+
+  async fillInfo(first: string, last: string, zip: string) {
+    await this.firstName.fill(first);
+    await this.lastName.fill(last);
+    await this.postalCode.fill(zip);
+    await this.continueButton.click();
+  }
+
+  /** Reads "$29.99" style labels and returns the number. */
+  static money(text: string | null) {
+    return Number((text ?? '').replace(/[^0-9.]/g, ''));
+  }
+
+  async expectComplete() {
+    await expect(this.page).toHaveURL(/checkout-complete\.html/);
+    await expect(this.completeHeader).toHaveText('Thank you for your order!');
+  }
+}
